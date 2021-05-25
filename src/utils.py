@@ -27,4 +27,5 @@ T_tool_inv = rtb.ETS.tx(-0.072 - 0.065446) * rtb.ETS.rx(-np.pi,
 T_base_1_inv = rtb.ETS.rz(np.pi, 'rad') * rtb.ETS.tx(-1.14) * rtb.ETS.ty(-0.126) * \
     rtb.ETS.tz(-0.2521)
 
-T_base_2_inv = 1
+T_base_2_inv = rtb.ETS.rx(np.pi/2, 'rad') * rtb.ETS.ry(-np.pi/2, 'rad') * \
+    rtb.ETS.tx(1.7021) * rtb.ETS.ty(2.224) * rtb.ETS.tz(-0.7235)
