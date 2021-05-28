@@ -1,5 +1,8 @@
+import sim
+import time
 from utils import *
 from kinematics import *
+from handlers import *
 from constants import *
 
 
@@ -44,7 +47,8 @@ def calc_trajectories(home_R1,
                       checkpoints_pioneer,
                       checkpoints_boxes,
                       checkpoints_boxes_shelf,
-                      checkpoints_store_box):  # AGREGAR checkpoints_shelf
+                      checkpoints_store_box,
+                      checkpoints_shelf):
     traj = {}
 
     # Trayectorias lado de la cinta
@@ -118,8 +122,140 @@ def calc_trajectories(home_R1,
                                                                  'R1'))
 
     # Trayectorias lado de la estantería
-    traj['prueba'] = get_angles_for_trajectory([home_R2, checkpoints_store_box[0], checkpoints_store_box[2], checkpoints_boxes_shelf[4], home_R2],
-                                               ['ctraj', 'ctraj', 'ctraj', 'ctraj'],
-                                               POINTS_SLOW_TRANSLATION,
-                                               'R2')
+    traj['pick_large_box'] = []
+    traj['pick_large_box'].append(get_angles_for_trajectory([home_R2, checkpoints_boxes_shelf[0]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+    traj['pick_large_box'].append(get_angles_for_trajectory([checkpoints_store_box[0], checkpoints_boxes_shelf[2]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+    traj['pick_large_box'].append(get_angles_for_trajectory([checkpoints_store_box[0], checkpoints_boxes_shelf[4]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+    traj['pick_small_box'] = []
+    traj['pick_small_box'].append(get_angles_for_trajectory([home_R2, checkpoints_boxes_shelf[1]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+    traj['pick_small_box'].append(get_angles_for_trajectory([checkpoints_store_box[0], checkpoints_boxes_shelf[3]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+    traj['pick_small_box'].append(get_angles_for_trajectory([checkpoints_store_box[0], checkpoints_boxes_shelf[5]],
+                                                            ['ctraj'],
+                                                            POINTS_MID_TRANSLATION,
+                                                            'R2'))
+
+    traj['move_to_shelf_large_box'] = []
+    traj['move_to_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[0],
+                                                                      checkpoints_store_box[0],
+                                                                      checkpoints_shelf[0]],
+                                                                     ['ctraj',
+                                                                      'ctraj'],
+                                                                     POINTS_MID_TRANSLATION,
+                                                                     'R2'))
+    traj['move_to_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[2],
+                                                                      checkpoints_store_box[1],
+                                                                      checkpoints_shelf[2]],
+                                                                     ['ctraj',
+                                                                      'ctraj'],
+                                                                     POINTS_MID_TRANSLATION,
+                                                                     'R2'))
+    traj['move_to_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[4],
+                                                                      checkpoints_store_box[2],
+                                                                      checkpoints_store_box[3],
+                                                                      checkpoints_store_box[4],
+                                                                      checkpoints_shelf[4]],
+                                                                     ['jtraj',
+                                                                      'jtraj',
+                                                                      'jtraj',
+                                                                      'jtraj'],
+                                                                     POINTS_SLOW_TRANSLATION,
+                                                                     'R2'))
+    traj['move_to_shelf_small_box'] = []
+    traj['move_to_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[1],
+                                                                      checkpoints_store_box[0],
+                                                                      checkpoints_shelf[1]],
+                                                                     ['ctraj',
+                                                                      'ctraj'],
+                                                                     POINTS_MID_TRANSLATION,
+                                                                     'R2'))
+    traj['move_to_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[3],
+                                                                      checkpoints_store_box[1],
+                                                                      checkpoints_shelf[3]],
+                                                                     ['ctraj',
+                                                                      'ctraj'],
+                                                                     POINTS_MID_TRANSLATION,
+                                                                     'R2'))
+    traj['move_to_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_boxes_shelf[5],
+                                                                      checkpoints_store_box[2],
+                                                                      checkpoints_store_box[3],
+                                                                      checkpoints_store_box[5],
+                                                                      checkpoints_shelf[5],
+                                                                      ],
+                                                                     ['jtraj',
+                                                                      'jtraj',
+                                                                      'jtraj',
+                                                                      'jtraj'],
+                                                                     POINTS_SLOW_TRANSLATION,
+                                                                     'R2'))
+
+    traj['back_home_from_shelf_large_box'] = []
+    traj['back_home_from_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_shelf[0],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['ctraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
+    traj['back_home_from_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_shelf[2],
+                                                                             checkpoints_store_box[1],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['ctraj',
+                                                                                'ctraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
+    traj['back_home_from_shelf_large_box'].append(get_angles_for_trajectory([checkpoints_shelf[4],
+                                                                             checkpoints_store_box[4],
+                                                                             checkpoints_store_box[3],
+                                                                             checkpoints_store_box[2],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['jtraj',
+                                                                             'jtraj',
+                                                                             'jtraj',
+                                                                             'jtraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
+    traj['back_home_from_shelf_small_box'] = []
+    traj['back_home_from_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_shelf[1],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['ctraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
+    traj['back_home_from_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_shelf[3],
+                                                                             checkpoints_store_box[1],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['ctraj',
+                                                                                'ctraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
+    traj['back_home_from_shelf_small_box'].append(get_angles_for_trajectory([checkpoints_shelf[5],
+                                                                             checkpoints_store_box[4],
+                                                                             checkpoints_store_box[3],
+                                                                             checkpoints_store_box[2],
+                                                                             checkpoints_store_box[0]],
+                                                                            ['jtraj',
+                                                                             'jtraj',
+                                                                             'jtraj',
+                                                                             'jtraj'],
+                                                                            POINTS_MID_TRANSLATION,
+                                                                            'R2'))
     return traj
+
+
+def move(traj, joints, clientID):
+    for point in traj:
+        time.sleep(0.05)
+        setJointsPosition(point, joints, JOINTS_NUM,
+                          clientID, sim.simx_opmode_oneshot)
