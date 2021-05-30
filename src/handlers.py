@@ -50,18 +50,19 @@ def checkpoints_get_from_buffer(checkpoints_list, robot, clientID):
                                                       checkpoint['orientation'],
                                                       robot)
 
-def setJointsPosition(joints_pos, joints, num, clientID, mode):
+
+def set_joints_position(joints_pos, joints, num, clientID, mode):
     for i in range(num):
         sim.simxSetJointPosition(clientID, joints[i], joints_pos[i], mode)
 
 
-def getObjectsPosition(joints_pos, joints, num, clientID, mode):
+def get_objects_position(joints_pos, joints, num, clientID, mode):
     for i in range(num):
         _, joints_pos[i] = sim.simxGetObjectPosition(
             clientID, joints[i], -1, mode)
 
 
-def getObjectsOrientation(joints_orient, joints, num, clientID, mode):
+def get_objects_orientation(joints_orient, joints, num, clientID, mode):
     for i in range(num):
         _, joints_orient[i] = sim.simxGetObjectOrientation(
             clientID, joints[i], -1, mode)

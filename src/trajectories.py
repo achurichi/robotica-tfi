@@ -257,5 +257,5 @@ def calc_trajectories(home_R1,
 def move(traj, joints, clientID):
     for point in traj:
         time.sleep(0.05)
-        setJointsPosition(point, joints, JOINTS_NUM,
-                          clientID, sim.simx_opmode_oneshot)
+        set_joints_position(point, joints, JOINTS_NUM,
+                            clientID, sim.simx_opmode_oneshot)
