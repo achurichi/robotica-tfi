@@ -5,14 +5,19 @@ from utils import *
 from constants import *
 
 
-def inverse_kinematics(pos, orient):
+def inverse_kinematics(pos, orient, robot='R1', base_pos=None, base_orient=None):
     """Cálculo de Cinemática Inversa para IRB120"""
 
     theta = [0, 0, 0, 0, 0, 0]
 
     # Cálculo de tita 1
-    # Se aplican las transformaciones para la posición de la tool
-    T0_EE = T_base_1_inv * get_SE3(pos, orient)
+    # Se aplican las transformaciones para la posición de la toolC e
+    if base_pos and base_orient:
+        T0_EE = get_SE3(base_pos, base_orient).inv() * get_SE3(pos, orient)
+    elif robot == 'R1':
+        T0_EE = T_base_1_inv * get_SE3(pos, orient)
+    elif robot == 'R2':
+        T0_EE = T_base_2_inv * get_SE3(pos, orient)
     # Se extrae T6_EE de T0_EE para obtener T0_6
     T0_6 = T0_EE * T_tool_inv
 
@@ -31,7 +36,8 @@ def inverse_kinematics(pos, orient):
     B = 0.31
 
     alfa = np.arctan2(Cz_prima, Cx_prima)
-    beta = np.arccos(-(B**2 - A**2 - C**2)/(2*A*C))
+    beta_arg = -(B**2 - A**2 - C**2)/(2*A*C)
+    beta = np.arctan2(np.sqrt(1 - beta_arg**2), beta_arg)
 
     theta[1] = np.pi/2 - beta - alfa  # Codo arriba
     # Si no existe solución con el codo arriba se calcula con el codo abajo
@@ -42,8 +48,10 @@ def inverse_kinematics(pos, orient):
 
     # Cálculo de tita 3
     E = 0.302
-    rho = np.arcsin(E/B)
-    gamma = np.arccos(-(C**2 - A**2 - B**2)/(2*A*B))
+    rho_arg = E/B
+    rho = np.arctan2(rho_arg, np.sqrt(1 - rho_arg**2))
+    gamma_arg = -(C**2 - A**2 - B**2)/(2*A*B)
+    gamma = np.arctan2(np.sqrt(1 - gamma_arg**2), gamma_arg)
 
     theta[2] = np.pi - rho - gamma
     theta[2] = np.minimum(theta[2], np.deg2rad(70))  # Restricciones de giro
@@ -62,7 +70,7 @@ def inverse_kinematics(pos, orient):
     # Se extraen los valores L, G, J, M y N de la matriz T3_6
     L = T3_6.eval().data[0][0][2]
     G = T3_6.eval().data[0][1][0]  # | F I L O |
-    J = T3_6.eval().data[0][1][1]  # T3_6 = | G J M P |
+    J = T3_6.eval().data[0][1][1]  # | G J M P |
     M = T3_6.eval().data[0][1][2]  # | H K N Q |
     N = T3_6.eval().data[0][2][2]  # | 0 0 0 1 |
 
