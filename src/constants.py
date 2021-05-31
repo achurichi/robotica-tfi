@@ -1,7 +1,7 @@
 # Constantes
 
 ROBOT_NAME = 'IRB120'          # Nombre del robot el Coppelia
-USE_SAVED_TRAJECTORIES = False  # Usa las trayectorias calculadas previamente
+USE_SAVED_TRAJECTORIES = True  # Usa las trayectorias calculadas previamente
 JOINTS_NUM = 6                 # Cantidad de articulaciones
 CHECKPOINTS_R1_NUM = 2         # Cantidad de Checkpoints para el Robot 1
 CHECKPOINTS_R2_NUM = 6         # Cantidad de Checkpoints para el Robot 1
